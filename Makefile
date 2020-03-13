@@ -125,19 +125,6 @@ bin_vocabulary/fast:
 .PHONY : bin_vocabulary/fast
 
 #=============================================================================
-# Target rules for targets named consumer
-
-# Build rule for target.
-consumer: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 consumer
-.PHONY : consumer
-
-# fast build rule for target.
-consumer/fast:
-	$(MAKE) -f CMakeFiles/consumer.dir/build.make CMakeFiles/consumer.dir/build
-.PHONY : consumer/fast
-
-#=============================================================================
 # Target rules for targets named interaction
 
 # Build rule for target.
@@ -162,43 +149,6 @@ mono: cmake_check_build_system
 mono/fast:
 	$(MAKE) -f CMakeFiles/mono.dir/build.make CMakeFiles/mono.dir/build
 .PHONY : mono/fast
-
-#=============================================================================
-# Target rules for targets named producer
-
-# Build rule for target.
-producer: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 producer
-.PHONY : producer
-
-# fast build rule for target.
-producer/fast:
-	$(MAKE) -f CMakeFiles/producer.dir/build.make CMakeFiles/producer.dir/build
-.PHONY : producer/fast
-
-Mono/consumer.o: Mono/consumer.cpp.o
-.PHONY : Mono/consumer.o
-
-# target to build an object file
-Mono/consumer.cpp.o:
-	$(MAKE) -f CMakeFiles/consumer.dir/build.make CMakeFiles/consumer.dir/Mono/consumer.cpp.o
-.PHONY : Mono/consumer.cpp.o
-
-Mono/consumer.i: Mono/consumer.cpp.i
-.PHONY : Mono/consumer.i
-
-# target to preprocess a source file
-Mono/consumer.cpp.i:
-	$(MAKE) -f CMakeFiles/consumer.dir/build.make CMakeFiles/consumer.dir/Mono/consumer.cpp.i
-.PHONY : Mono/consumer.cpp.i
-
-Mono/consumer.s: Mono/consumer.cpp.s
-.PHONY : Mono/consumer.s
-
-# target to generate assembly for a file
-Mono/consumer.cpp.s:
-	$(MAKE) -f CMakeFiles/consumer.dir/build.make CMakeFiles/consumer.dir/Mono/consumer.cpp.s
-.PHONY : Mono/consumer.cpp.s
 
 Mono/interaction.o: Mono/interaction.cpp.o
 .PHONY : Mono/interaction.o
@@ -247,30 +197,6 @@ Mono/mono.s: Mono/mono.cpp.s
 Mono/mono.cpp.s:
 	$(MAKE) -f CMakeFiles/mono.dir/build.make CMakeFiles/mono.dir/Mono/mono.cpp.s
 .PHONY : Mono/mono.cpp.s
-
-Mono/producer.o: Mono/producer.cpp.o
-.PHONY : Mono/producer.o
-
-# target to build an object file
-Mono/producer.cpp.o:
-	$(MAKE) -f CMakeFiles/producer.dir/build.make CMakeFiles/producer.dir/Mono/producer.cpp.o
-.PHONY : Mono/producer.cpp.o
-
-Mono/producer.i: Mono/producer.cpp.i
-.PHONY : Mono/producer.i
-
-# target to preprocess a source file
-Mono/producer.cpp.i:
-	$(MAKE) -f CMakeFiles/producer.dir/build.make CMakeFiles/producer.dir/Mono/producer.cpp.i
-.PHONY : Mono/producer.cpp.i
-
-Mono/producer.s: Mono/producer.cpp.s
-.PHONY : Mono/producer.s
-
-# target to generate assembly for a file
-Mono/producer.cpp.s:
-	$(MAKE) -f CMakeFiles/producer.dir/build.make CMakeFiles/producer.dir/Mono/producer.cpp.s
-.PHONY : Mono/producer.cpp.s
 
 Vocabulary/bin_vocabulary.o: Vocabulary/bin_vocabulary.cpp.o
 .PHONY : Vocabulary/bin_vocabulary.o
@@ -760,24 +686,16 @@ help:
 	@echo "... depend"
 	@echo "... SLAM"
 	@echo "... bin_vocabulary"
-	@echo "... consumer"
 	@echo "... edit_cache"
 	@echo "... interaction"
 	@echo "... mono"
-	@echo "... producer"
 	@echo "... rebuild_cache"
-	@echo "... Mono/consumer.o"
-	@echo "... Mono/consumer.i"
-	@echo "... Mono/consumer.s"
 	@echo "... Mono/interaction.o"
 	@echo "... Mono/interaction.i"
 	@echo "... Mono/interaction.s"
 	@echo "... Mono/mono.o"
 	@echo "... Mono/mono.i"
 	@echo "... Mono/mono.s"
-	@echo "... Mono/producer.o"
-	@echo "... Mono/producer.i"
-	@echo "... Mono/producer.s"
 	@echo "... Vocabulary/bin_vocabulary.o"
 	@echo "... Vocabulary/bin_vocabulary.i"
 	@echo "... Vocabulary/bin_vocabulary.s"

@@ -2,7 +2,7 @@
  # @Author: DahlMill
  # @Date: 2020-03-05 17:50:10
  # @LastEditors: DahlMill
- # @LastEditTime: 2020-03-13 10:17:17
+ # @LastEditTime: 2020-03-13 14:23:26
  # @FilePath: /VSLAM/mr133build.sh
  ###
 
@@ -32,9 +32,10 @@ cmake .
 # cp makefile_old/CMakeCache.txt ./
 sudo make
 sudo chmod 777 mono
-sudo chmod 777 producer
-sudo chmod 777 consumer
 sudo chmod 777 interaction
+
+# sudo chmod 777 producer
+# sudo chmod 777 consumer
 
 cp mono ~/temp/SLAM/
 cp interaction ~/temp/SLAM/

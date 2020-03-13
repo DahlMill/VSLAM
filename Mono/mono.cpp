@@ -42,7 +42,7 @@ using namespace ORB_SLAM2;
 
 #define CV_IMG_COUNT 0
 
-long GetCurrentTime(void);
+double GetCurrentTime(void);
 
 void InitShm(void);
 void PostShm(POS pos);
@@ -88,9 +88,9 @@ int main(int argc, char **argv)
 #else
     VideoCapture inputVideo(0);
     // inputVideo.set(CV_CAP_PROP_FOURCC, CV_FOURCC('M', 'J', 'P', 'G'));//视频流格式
-	// inputVideo.set(CV_CAP_PROP_FPS, 60);//帧率
-	// inputVideo.set(CV_CAP_PROP_FRAME_WIDTH, 640); //帧宽
-	// inputVideo.set(CV_CAP_PROP_FRAME_HEIGHT, 480);//帧高
+    // inputVideo.set(CV_CAP_PROP_FPS, 60);//帧率
+    // inputVideo.set(CV_CAP_PROP_FRAME_WIDTH, 640); //帧宽
+    // inputVideo.set(CV_CAP_PROP_FRAME_HEIGHT, 480);//帧高
 
     while (1)
 #endif
@@ -128,11 +128,12 @@ int main(int argc, char **argv)
             float fy = Twc.at<float>(1, 0) * 100;
             float fz = Twc.at<float>(2, 0) * 100;
 
-            cout << "[" << tframe << "]" <<  " SLAM " << "X " << fx << " Y " << fy << " Z " << fz << endl;
+            cout << setprecision(16)
+                 << "[" << tframe << "] SLAM X " << fx << " Y " << fy << " Z " << fz << endl;
             posSLAM.x = fx;
             posSLAM.y = fy;
             posSLAM.z = fz;
-            
+
             cout << "------------------" << endl;
         }
 
@@ -145,7 +146,8 @@ int main(int argc, char **argv)
         // cout << "Chassis " << "X " << posChassis.x << " Y " << posChassis.y << " Yaw " << posChassis.yaw << endl;
         iCount++;
         strPath << "/tmp/img" << iCount << ".jpg";
-        cout << "[" << tframe << "]" <<  " write img " << strPath.str() << endl;
+        cout << setprecision(16)
+             << "[" << tframe << "] write img " << strPath.str() << endl;
         imwrite(strPath.str(), im);
 
         // ostringstream strLog;
@@ -273,20 +275,25 @@ void InitShm2Chassis(void)
     SetSemValue(iSemID2Chassis, 1);
 }
 
-long GetCurrentTime(void)
+double GetCurrentTime(void)
 {
     timeval tv;
     gettimeofday(&tv, NULL);
 
-    long long second = tv.tv_sec;
-    long long usecond = tv.tv_usec;
-    
-    long long time = second * 1000 + usecond / 1000;
-    long result = time;
-    return result;
+    // long long second = tv.tv_sec;
+    // long long usecond = tv.tv_usec;
+
+    // long long time = second * 1000 + usecond / 1000;
+    // cout << time << endl;
+
+    double second = tv.tv_sec % 10000000000;
+    long usecond = tv.tv_usec / 1000;
+
+    // double result = time / 1000.0;
+
+    return second + (usecond / 1000.0000f);
 
     // long tvTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     // long nowTime = (0xFFFFFFFF / 2) + tvTime;
     // return nowTime;
-
 }

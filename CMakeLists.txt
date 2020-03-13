@@ -98,11 +98,11 @@ target_link_libraries(mono ${PROJECT_NAME})
 add_executable(interaction Mono/interaction.cpp)
 target_link_libraries(interaction ${PROJECT_NAME})
 
-add_executable(consumer Mono/consumer.cpp)
-target_link_libraries(consumer ${PROJECT_NAME})
+# add_executable(consumer Mono/consumer.cpp)
+# target_link_libraries(consumer ${PROJECT_NAME})
 
-add_executable(producer Mono/producer.cpp)
-target_link_libraries(producer ${PROJECT_NAME})
+# add_executable(producer Mono/producer.cpp)
+# target_link_libraries(producer ${PROJECT_NAME})
 
 #add_executable(mono_kitti Examples/Monocular/mono_kitti.cc)
 #target_link_libraries(mono_kitti ${PROJECT_NAME})
