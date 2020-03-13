@@ -1,0 +1,211 @@
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <chrono>
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
+#include "Semaphore.h"
+#include "Converter.h"
+#include <ConvertCP.h>
+#include <sys/time.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
+#include "ShmCom.h"
+#include <System.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <errno.h>
+
+#define SEM_SEED 1773
+#define SHM_SEED 1774
+
+int iSemID; // Semaphore id
+int iShmID; // shared-memory id
+void *shared_memory = (void *)0;
+SHM_POS *shared_stuff;
+
+using namespace cv;
+using namespace std;
+using namespace ORB_SLAM2;
+
+// void LoadImages(const string &strFile, vector<string> &vstrImageFilenames,
+//                 vector<double> &vTimestamps);
+
+#define CV_IMG_COUNT 0
+
+long GetCurrentTime(void);
+
+void InitShm(void);
+
+int main(int argc, char **argv)
+{
+    cout << endl
+         << "-------mono v1.8-------" << endl;
+
+    InitShm();
+
+    if (argc != 4)
+    {
+        cerr << endl
+             << "Usage: ./mono_tum path_to_vocabulary path_to_settings path_to_sequence" << endl;
+        return 1;
+    }
+
+    // Create SLAM system. It initializes all system threads and gets ready to process frames.
+    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, false);
+
+    cout << endl
+         << "CV_IMG_COUNT " << CV_IMG_COUNT << endl;
+    int iCount = 0;
+
+    // Main loop
+    // cv::Mat im;
+    POS pos;
+    memset(&pos, 0, sizeof(POS));
+
+    int count = 0;
+
+#if CV_IMG_COUNT
+    for (int i = 0; i < CV_IMG_COUNT; i++)
+#else
+    // VideoCapture inputVideo(0);
+    while (1)
+#endif
+    {
+        // cout << iCount << endl;
+        iCount++;
+        // Read image from file
+
+        ostringstream strPath;
+        strPath << "/tmp/cvImg" << iCount << ".jpg";
+        cout << "img Path " << strPath.str() << endl;
+
+#if CV_IMG_COUNT
+        im = imread(strPath.str());
+#else
+        // inputVideo >> im;
+#endif
+
+        double tframe = GetCurrentTime();
+
+        // if (im.empty())
+        // {
+        //     cout << "Failed to load image" << endl;
+        //     return 1;
+        // }
+
+        // Pass the image to the SLAM system
+
+        // Mat Tcw = SLAM.TrackMonocular(im, tframe);
+
+        // if ((Tcw.cols == 4) && (Tcw.rows == 4))
+        {
+            // Mat Rwc = Tcw.rowRange(0, 3).colRange(0, 3).t();
+            // Mat Twc = -Rwc * Tcw.rowRange(0, 3).col(3);
+            // vector<float> q = Converter::toQuaternion(Rwc);
+            // // cout << "------------------" << endl;
+            // // cout << Twc << endl;
+
+            // float fx = Twc.at<float>(0, 0) * 100;
+            // float fy = Twc.at<float>(1, 0) * 100;
+            // float fz = Twc.at<float>(2, 0) * 100;
+
+            // cout << "X " << fx << endl;
+            // cout << "Y " << fy << endl;
+            // cout << "Z " << fz << endl;
+
+            // pos.x = fx;
+            // pos.y = fy;
+            // pos.z = fz;
+
+            pos.x = count;
+            pos.y = -1 * count;
+            pos.z = count;
+            pos.status = -1 * count;
+
+            usleep(100 * 1000);
+
+            count++;
+
+            cout << "------------------" << endl;
+        }
+
+        // cout << "SemaphoreP" << endl;
+        SemaphoreP(iSemID);
+        /* Write it into shared memory */
+        // cout << "memcpy" << endl;
+        memcpy((char *)shared_stuff->shmSp, &pos, sizeof(POS));
+        shared_stuff->endFlag = 0;
+        // cout << "SemaphoreV" << endl;
+        SemaphoreV(iSemID);
+#if CV_IMG_COUNT
+#else
+        // imwrite(strPath.str(), im);
+#endif
+    }
+
+    // Stop all threads
+    SLAM.Shutdown();
+
+    // Save camera trajectory
+    // SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
+
+    SemaphoreP(iSemID);
+    shared_stuff->endFlag = 1;
+    SemaphoreV(iSemID);
+
+    /* over */
+    printf("\nProducer over!\n");
+    DelSemValue(iSemID);
+    if (shmdt(shared_memory) == -1)
+    {
+        fprintf(stderr, "shmdt failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    exit(EXIT_SUCCESS);
+
+    return 0;
+}
+
+void InitShm(void)
+{
+    /* Create and init Semaphore */
+    iSemID = semget((key_t)SEM_SEED, 1, 0666 | IPC_CREAT);
+    if (iSemID == -1)
+    {
+        fprintf(stderr, "semget failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Init shared-memory */
+    iShmID = shmget((key_t)SHM_SEED, sizeof(SHM_POS), 0666 | IPC_CREAT);
+    if (iShmID == -1)
+    {
+        fprintf(stderr, "shmget failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    shared_memory = shmat(iShmID, (void *)0, 0);
+    if (shared_memory == (void *)-1)
+    {
+        fprintf(stderr, "shmat failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    shared_stuff = (SHM_POS *)shared_memory;
+    shared_stuff->endFlag = 0;
+
+    SetSemValue(iSemID, 1);
+}
+
+long GetCurrentTime(void)
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}

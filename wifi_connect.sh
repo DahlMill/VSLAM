@@ -1,0 +1,1 @@
+wifi_connect_ap_test UMOUSE_2.4G UM89312305
