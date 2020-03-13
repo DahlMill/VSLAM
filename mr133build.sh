@@ -5,6 +5,21 @@
  # @LastEditTime: 2020-03-13 10:17:17
  # @FilePath: /VSLAM/mr133build.sh
  ###
+
+echo "Configuring and building Thirdparty/DBoW2 ..."
+
+cd Thirdparty/DBoW2
+
+sh build.sh
+
+cd ../g2o
+
+echo "Configuring and building Thirdparty/g2o ..."
+
+sh build.sh
+
+cd ../../
+
 export R328_TOOL_ROOT=/home/dm/tina3.5.1/prebuilt/gcc/linux-x86/arm/
 export STAGING_DIR=/home/dm/ubuntu/
 

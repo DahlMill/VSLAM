@@ -1,10 +1,11 @@
 CMakeFiles/
 *CMakeFiles*
-CMakeCache.txt
 *.so
+
 interaction
 consumer
 mono
 producer
 bin_vocabulary
+
 *~
