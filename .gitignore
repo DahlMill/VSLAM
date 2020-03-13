@@ -1,11 +1,12 @@
 CMakeFiles/
 *CMakeFiles*
+.vscode/
+*.vscode*
 *.so
+*~
 
 interaction
 consumer
 mono
 producer
 bin_vocabulary
-
-*~
