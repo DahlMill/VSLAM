@@ -128,7 +128,7 @@ int main(int argc, char **argv)
             float fy = Twc.at<float>(1, 0) * 100;
             float fz = Twc.at<float>(2, 0) * 100;
 
-            cout << setprecision(16)
+            cout << setprecision(12)
                  << "[" << tframe << "] SLAM X " << fx << " Y " << fy << " Z " << fz << endl;
             posSLAM.x = fx;
             posSLAM.y = fy;
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
         // cout << "Chassis " << "X " << posChassis.x << " Y " << posChassis.y << " Yaw " << posChassis.yaw << endl;
         iCount++;
         strPath << "/tmp/img" << iCount << ".jpg";
-        cout << setprecision(16)
+        cout << setprecision(12)
              << "[" << tframe << "] write img " << strPath.str() << endl;
         imwrite(strPath.str(), im);
 
@@ -280,20 +280,9 @@ double GetCurrentTime(void)
     timeval tv;
     gettimeofday(&tv, NULL);
 
-    // long long second = tv.tv_sec;
-    // long long usecond = tv.tv_usec;
-
-    // long long time = second * 1000 + usecond / 1000;
-    // cout << time << endl;
-
-    double second = tv.tv_sec % 10000000000;
+    double second = tv.tv_sec % 1000000000;
     long usecond = tv.tv_usec / 1000;
-
-    // double result = time / 1000.0;
 
     return second + (usecond / 1000.0000f);
 
-    // long tvTime = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-    // long nowTime = (0xFFFFFFFF / 2) + tvTime;
-    // return nowTime;
 }
